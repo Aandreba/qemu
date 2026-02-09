@@ -3866,6 +3866,7 @@ foreach target : target_dirs
                  objects: objects,
                  include_directories: target_inc,
                  c_args: c_args,
+                 pic: true,
                  build_by_default: false,
                  name_suffix: 'fa')
 
