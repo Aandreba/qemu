@@ -3763,6 +3763,7 @@ common_all = static_library('common',
                             include_directories: common_user_inc,
                             implicit_include_directories: false,
                             dependencies: common_all.dependencies(),
+                            pic: true,
                             name_suffix: 'fa')
 
 feature_to_c = find_program('scripts/feature_to_c.py')
