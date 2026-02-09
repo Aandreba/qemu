@@ -20,22 +20,22 @@
 #ifndef QEMU_CPU_H
 #define QEMU_CPU_H
 
-#include "hw/qdev-core.h"
 #include "disas/dis-asm.h"
 #include "exec/cpu-common.h"
 #include "exec/hwaddr.h"
 #include "exec/memattrs.h"
 #include "exec/tlb-common.h"
+#include "hw/qdev-core.h"
 #include "qapi/qapi-types-run-state.h"
 #include "qemu/bitmap.h"
-#include "qemu/rcu_queue.h"
-#include "qemu/queue.h"
-#include "qemu/thread.h"
 #include "qemu/plugin-event.h"
+#include "qemu/queue.h"
+#include "qemu/rcu_queue.h"
+#include "qemu/thread.h"
 #include "qom/object.h"
 
-typedef int (*WriteCoreDumpFunction)(const void *buf, size_t size,
-                                     void *opaque);
+typedef int (*WriteCoreDumpFunction)(const void* buf, size_t size,
+                                     void* opaque);
 
 /**
  * SECTION:cpu
@@ -50,7 +50,7 @@ typedef int (*WriteCoreDumpFunction)(const void *buf, size_t size,
  * FooCPU *foo_env_get_cpu(), we deviate from usual QOM practice by using
  * an unchecked cast.
  */
-#define CPU(obj) ((CPUState *)(obj))
+#define CPU(obj) ((CPUState*)(obj))
 
 /*
  * The class checkers bring in CPU_GET_CLASS() which is potentially
@@ -78,11 +78,11 @@ DECLARE_CLASS_CHECKERS(CPUClass, CPU,
  * The object struct and class struct need to be declared manually.
  */
 #define OBJECT_DECLARE_CPU_TYPE(CpuInstanceType, CpuClassType, CPU_MODULE_OBJ_NAME) \
-    typedef struct ArchCPU CpuInstanceType; \
+    typedef struct ArchCPU CpuInstanceType;                                         \
     OBJECT_DECLARE_TYPE(ArchCPU, CpuClassType, CPU_MODULE_OBJ_NAME);
 
 typedef enum MMUAccessType {
-    MMU_DATA_LOAD  = 0,
+    MMU_DATA_LOAD = 0,
     MMU_DATA_STORE = 1,
     MMU_INST_FETCH = 2
 #define MMU_ACCESS_COUNT 3
@@ -149,41 +149,41 @@ struct CPUClass {
     DeviceClass parent_class;
     /*< public >*/
 
-    ObjectClass *(*class_by_name)(const char *cpu_model);
-    void (*parse_features)(const char *typename, char *str, Error **errp);
+    ObjectClass* (*class_by_name)(const char* cpu_model);
+    void (*parse_features)(const char* typename, char* str, Error** errp);
 
-    bool (*has_work)(CPUState *cpu);
-    int (*memory_rw_debug)(CPUState *cpu, vaddr addr,
-                           uint8_t *buf, int len, bool is_write);
-    void (*dump_state)(CPUState *cpu, FILE *, int flags);
-    void (*query_cpu_fast)(CPUState *cpu, CpuInfoFast *value);
-    int64_t (*get_arch_id)(CPUState *cpu);
-    void (*set_pc)(CPUState *cpu, vaddr value);
-    vaddr (*get_pc)(CPUState *cpu);
-    int (*gdb_read_register)(CPUState *cpu, GByteArray *buf, int reg);
-    int (*gdb_write_register)(CPUState *cpu, uint8_t *buf, int reg);
-    vaddr (*gdb_adjust_breakpoint)(CPUState *cpu, vaddr addr);
+    bool (*has_work)(CPUState* cpu);
+    int (*memory_rw_debug)(CPUState* cpu, vaddr addr,
+                           uint8_t* buf, int len, bool is_write);
+    void (*dump_state)(CPUState* cpu, FILE*, int flags);
+    void (*query_cpu_fast)(CPUState* cpu, CpuInfoFast* value);
+    int64_t (*get_arch_id)(CPUState* cpu);
+    void (*set_pc)(CPUState* cpu, vaddr value);
+    vaddr (*get_pc)(CPUState* cpu);
+    int (*gdb_read_register)(CPUState* cpu, GByteArray* buf, int reg);
+    int (*gdb_write_register)(CPUState* cpu, uint8_t* buf, int reg);
+    vaddr (*gdb_adjust_breakpoint)(CPUState* cpu, vaddr addr);
 
-    const char *gdb_core_xml_file;
-    const gchar * (*gdb_arch_name)(CPUState *cpu);
-    const char * (*gdb_get_dynamic_xml)(CPUState *cpu, const char *xmlname);
+    const char* gdb_core_xml_file;
+    const gchar* (*gdb_arch_name)(CPUState* cpu);
+    const char* (*gdb_get_dynamic_xml)(CPUState* cpu, const char* xmlname);
 
-    void (*disas_set_info)(CPUState *cpu, disassemble_info *info);
+    void (*disas_set_info)(CPUState* cpu, disassemble_info* info);
 
-    const char *deprecation_note;
-    struct AccelCPUClass *accel_cpu;
+    const char* deprecation_note;
+    struct AccelCPUClass* accel_cpu;
 
     /* when system emulation is not available, this pointer is NULL */
-    const struct SysemuCPUOps *sysemu_ops;
+    const struct SysemuCPUOps* sysemu_ops;
 
     /* when TCG is not available, this pointer is NULL */
-    const struct TCGCPUOps *tcg_ops;
+    const struct TCGCPUOps* tcg_ops;
 
     /*
      * if not NULL, this is called in order for the CPUClass to initialize
      * class data that depends on the accelerator, see accel/accel-common.c.
      */
-    void (*init_accel_cpu)(struct AccelCPUClass *accel_cpu, CPUClass *cc);
+    void (*init_accel_cpu)(struct AccelCPUClass* accel_cpu, CPUClass* cc);
 
     /*
      * Keep non-pointer data at the end to minimize holes.
@@ -285,7 +285,7 @@ typedef struct CPUTLBDesc {
     /* The tlb victim table, in two parts.  */
     CPUTLBEntry vtable[CPU_VTLB_SIZE];
     CPUTLBEntryFull vfulltlb[CPU_VTLB_SIZE];
-    CPUTLBEntryFull *fulltlb;
+    CPUTLBEntryFull* fulltlb;
 } CPUTLBDesc;
 
 /*
@@ -357,7 +357,8 @@ typedef struct CPUNegativeOffsetState {
 typedef struct CPUBreakpoint {
     vaddr pc;
     int flags; /* BP_* */
-    QTAILQ_ENTRY(CPUBreakpoint) entry;
+    QTAILQ_ENTRY(CPUBreakpoint)
+    entry;
 } CPUBreakpoint;
 
 struct CPUWatchpoint {
@@ -366,7 +367,8 @@ struct CPUWatchpoint {
     vaddr hitaddr;
     MemTxAttrs hitattrs;
     int flags; /* BP_* */
-    QTAILQ_ENTRY(CPUWatchpoint) entry;
+    QTAILQ_ENTRY(CPUWatchpoint)
+    entry;
 };
 
 struct KVMState;
@@ -378,19 +380,19 @@ struct kvm_run;
  * hosts in a single parameter
  */
 typedef union {
-    int           host_int;
+    int host_int;
     unsigned long host_ulong;
-    void         *host_ptr;
-    vaddr         target_ptr;
+    void* host_ptr;
+    vaddr target_ptr;
 } run_on_cpu_data;
 
-#define RUN_ON_CPU_HOST_PTR(p)    ((run_on_cpu_data){.host_ptr = (p)})
-#define RUN_ON_CPU_HOST_INT(i)    ((run_on_cpu_data){.host_int = (i)})
+#define RUN_ON_CPU_HOST_PTR(p) ((run_on_cpu_data){.host_ptr = (p)})
+#define RUN_ON_CPU_HOST_INT(i) ((run_on_cpu_data){.host_int = (i)})
 #define RUN_ON_CPU_HOST_ULONG(ul) ((run_on_cpu_data){.host_ulong = (ul)})
-#define RUN_ON_CPU_TARGET_PTR(v)  ((run_on_cpu_data){.target_ptr = (v)})
-#define RUN_ON_CPU_NULL           RUN_ON_CPU_HOST_PTR(NULL)
+#define RUN_ON_CPU_TARGET_PTR(v) ((run_on_cpu_data){.target_ptr = (v)})
+#define RUN_ON_CPU_NULL RUN_ON_CPU_HOST_PTR(NULL)
 
-typedef void (*run_on_cpu_func)(CPUState *cpu, run_on_cpu_data data);
+typedef void (*run_on_cpu_func)(CPUState* cpu, run_on_cpu_data data);
 
 struct qemu_work_item;
 
@@ -458,19 +460,19 @@ struct CPUState {
     /*< private >*/
     DeviceState parent_obj;
     /* cache to avoid expensive CPU_GET_CLASS */
-    CPUClass *cc;
+    CPUClass* cc;
     /*< public >*/
 
     int nr_cores;
     int nr_threads;
 
-    struct QemuThread *thread;
+    struct QemuThread* thread;
 #ifdef _WIN32
     QemuSemaphore sem;
 #endif
     int thread_id;
     bool running, has_waiter;
-    struct QemuCond *halt_cond;
+    struct QemuCond* halt_cond;
     bool thread_kicked;
     bool created;
     bool stop;
@@ -493,27 +495,31 @@ struct CPUState {
     sigjmp_buf jmp_env;
 
     QemuMutex work_mutex;
-    QSIMPLEQ_HEAD(, qemu_work_item) work_list;
+    QSIMPLEQ_HEAD(, qemu_work_item)
+    work_list;
 
-    CPUAddressSpace *cpu_ases;
+    CPUAddressSpace* cpu_ases;
     int num_ases;
-    AddressSpace *as;
-    MemoryRegion *memory;
+    AddressSpace* as;
+    MemoryRegion* memory;
 
-    CPUJumpCache *tb_jmp_cache;
+    CPUJumpCache* tb_jmp_cache;
 
-    GArray *gdb_regs;
+    GArray* gdb_regs;
     int gdb_num_regs;
     int gdb_num_g_regs;
-    QTAILQ_ENTRY(CPUState) node;
+    QTAILQ_ENTRY(CPUState)
+    node;
 
     /* ice debug support */
-    QTAILQ_HEAD(, CPUBreakpoint) breakpoints;
+    QTAILQ_HEAD(, CPUBreakpoint)
+    breakpoints;
 
-    QTAILQ_HEAD(, CPUWatchpoint) watchpoints;
-    CPUWatchpoint *watchpoint_hit;
+    QTAILQ_HEAD(, CPUWatchpoint)
+    watchpoints;
+    CPUWatchpoint* watchpoint_hit;
 
-    void *opaque;
+    void* opaque;
 
     /* In order to avoid passing too many arguments to the MMIO helpers,
      * we store some rarely used information in the CPU context.
@@ -522,9 +528,9 @@ struct CPUState {
 
     /* Only used in KVM */
     int kvm_fd;
-    struct KVMState *kvm_state;
-    struct kvm_run *kvm_run;
-    struct kvm_dirty_gfn *kvm_dirty_gfns;
+    struct KVMState* kvm_state;
+    struct kvm_run* kvm_run;
+    struct kvm_dirty_gfn* kvm_dirty_gfns;
     uint32_t kvm_fetch_index;
     uint64_t dirty_pages;
     int kvm_vcpu_stats_fd;
@@ -535,7 +541,9 @@ struct CPUState {
     DECLARE_BITMAP(plugin_mask, QEMU_PLUGIN_EV_MAX);
 
 #ifdef CONFIG_PLUGIN
-    GArray *plugin_mem_cbs;
+    GArray* plugin_mem_cbs;
+#else
+    void* __plugin_filler;
 #endif
 
     /* TODO Move common fields from CPUArchState here. */
@@ -545,7 +553,7 @@ struct CPUState {
     uint32_t halted;
     int32_t exception_index;
 
-    AccelCPUState *accel;
+    AccelCPUState* accel;
     /* shared by kvm and hvf */
     bool vcpu_dirty;
 
@@ -566,7 +574,7 @@ struct CPUState {
     bool prctl_unalign_sigbus;
 
     /* track IOMMUs whose translations we've cached in the TCG TLB */
-    GArray *iommu_notifiers;
+    GArray* iommu_notifiers;
 
     /*
      * MUST BE LAST in order to minimize the displacement to CPUArchState.
@@ -579,22 +587,21 @@ struct CPUState {
 QEMU_BUILD_BUG_ON(offsetof(CPUState, neg) !=
                   sizeof(CPUState) - sizeof(CPUNegativeOffsetState));
 
-static inline CPUArchState *cpu_env(CPUState *cpu)
-{
+static inline CPUArchState* cpu_env(CPUState* cpu) {
     /* We validate that CPUArchState follows CPUState in cpu-all.h. */
-    return (CPUArchState *)(cpu + 1);
+    return (CPUArchState*)(cpu + 1);
 }
 
 typedef QTAILQ_HEAD(CPUTailQ, CPUState) CPUTailQ;
 extern CPUTailQ cpus_queue;
 
-#define first_cpu        QTAILQ_FIRST_RCU(&cpus_queue)
-#define CPU_NEXT(cpu)    QTAILQ_NEXT_RCU(cpu, node)
+#define first_cpu QTAILQ_FIRST_RCU(&cpus_queue)
+#define CPU_NEXT(cpu) QTAILQ_NEXT_RCU(cpu, node)
 #define CPU_FOREACH(cpu) QTAILQ_FOREACH_RCU(cpu, &cpus_queue, node)
 #define CPU_FOREACH_SAFE(cpu, next_cpu) \
     QTAILQ_FOREACH_SAFE_RCU(cpu, &cpus_queue, node, next_cpu)
 
-extern __thread CPUState *current_cpu;
+extern __thread CPUState* current_cpu;
 
 /**
  * qemu_tcg_mttcg_enabled:
@@ -611,7 +618,7 @@ extern bool mttcg_enabled;
  *
  * Returns: %true if paging is enabled, %false otherwise.
  */
-bool cpu_paging_enabled(const CPUState *cpu);
+bool cpu_paging_enabled(const CPUState* cpu);
 
 /**
  * cpu_get_memory_mapping:
@@ -621,8 +628,8 @@ bool cpu_paging_enabled(const CPUState *cpu);
  *
  * Returns: %true on success, %false otherwise.
  */
-bool cpu_get_memory_mapping(CPUState *cpu, MemoryMappingList *list,
-                            Error **errp);
+bool cpu_get_memory_mapping(CPUState* cpu, MemoryMappingList* list,
+                            Error** errp);
 
 #if !defined(CONFIG_USER_ONLY)
 
@@ -633,8 +640,8 @@ bool cpu_get_memory_mapping(CPUState *cpu, MemoryMappingList *list,
  * @cpuid: ID number of the CPU
  * @opaque: pointer to the CPUState struct
  */
-int cpu_write_elf64_note(WriteCoreDumpFunction f, CPUState *cpu,
-                         int cpuid, void *opaque);
+int cpu_write_elf64_note(WriteCoreDumpFunction f, CPUState* cpu,
+                         int cpuid, void* opaque);
 
 /**
  * cpu_write_elf64_qemunote:
@@ -643,8 +650,8 @@ int cpu_write_elf64_note(WriteCoreDumpFunction f, CPUState *cpu,
  * @cpuid: ID number of the CPU
  * @opaque: pointer to the CPUState struct
  */
-int cpu_write_elf64_qemunote(WriteCoreDumpFunction f, CPUState *cpu,
-                             void *opaque);
+int cpu_write_elf64_qemunote(WriteCoreDumpFunction f, CPUState* cpu,
+                             void* opaque);
 
 /**
  * cpu_write_elf32_note:
@@ -653,8 +660,8 @@ int cpu_write_elf64_qemunote(WriteCoreDumpFunction f, CPUState *cpu,
  * @cpuid: ID number of the CPU
  * @opaque: pointer to the CPUState struct
  */
-int cpu_write_elf32_note(WriteCoreDumpFunction f, CPUState *cpu,
-                         int cpuid, void *opaque);
+int cpu_write_elf32_note(WriteCoreDumpFunction f, CPUState* cpu,
+                         int cpuid, void* opaque);
 
 /**
  * cpu_write_elf32_qemunote:
@@ -663,8 +670,8 @@ int cpu_write_elf32_note(WriteCoreDumpFunction f, CPUState *cpu,
  * @cpuid: ID number of the CPU
  * @opaque: pointer to the CPUState struct
  */
-int cpu_write_elf32_qemunote(WriteCoreDumpFunction f, CPUState *cpu,
-                             void *opaque);
+int cpu_write_elf32_qemunote(WriteCoreDumpFunction f, CPUState* cpu,
+                             void* opaque);
 
 /**
  * cpu_get_crash_info:
@@ -673,7 +680,7 @@ int cpu_write_elf32_qemunote(WriteCoreDumpFunction f, CPUState *cpu,
  * Gets the previously saved crash information.
  * Caller is responsible for freeing the data.
  */
-GuestPanicInformation *cpu_get_crash_info(CPUState *cpu);
+GuestPanicInformation* cpu_get_crash_info(CPUState* cpu);
 
 #endif /* !CONFIG_USER_ONLY */
 
@@ -686,9 +693,9 @@ GuestPanicInformation *cpu_get_crash_info(CPUState *cpu);
  */
 enum CPUDumpFlags {
     CPU_DUMP_CODE = 0x00010000,
-    CPU_DUMP_FPU  = 0x00020000,
+    CPU_DUMP_FPU = 0x00020000,
     CPU_DUMP_CCOP = 0x00040000,
-    CPU_DUMP_VPU  = 0x00080000,
+    CPU_DUMP_VPU = 0x00080000,
 };
 
 /**
@@ -698,7 +705,7 @@ enum CPUDumpFlags {
  *
  * Dumps CPU state.
  */
-void cpu_dump_state(CPUState *cpu, FILE *f, int flags) REVNG_NOOP;
+void cpu_dump_state(CPUState* cpu, FILE* f, int flags) REVNG_NOOP;
 
 #ifndef CONFIG_USER_ONLY
 /**
@@ -714,8 +721,8 @@ void cpu_dump_state(CPUState *cpu, FILE *f, int flags) REVNG_NOOP;
  *
  * Returns: Corresponding physical page address or -1 if no page found.
  */
-hwaddr cpu_get_phys_page_attrs_debug(CPUState *cpu, vaddr addr,
-                                     MemTxAttrs *attrs);
+hwaddr cpu_get_phys_page_attrs_debug(CPUState* cpu, vaddr addr,
+                                     MemTxAttrs* attrs);
 
 /**
  * cpu_get_phys_page_debug:
@@ -727,7 +734,7 @@ hwaddr cpu_get_phys_page_attrs_debug(CPUState *cpu, vaddr addr,
  *
  * Returns: Corresponding physical page address or -1 if no page found.
  */
-hwaddr cpu_get_phys_page_debug(CPUState *cpu, vaddr addr);
+hwaddr cpu_get_phys_page_debug(CPUState* cpu, vaddr addr);
 
 /** cpu_asidx_from_attrs:
  * @cpu: CPU
@@ -736,7 +743,7 @@ hwaddr cpu_get_phys_page_debug(CPUState *cpu, vaddr addr);
  * Returns the address space index specifying the CPU AddressSpace
  * to use for a memory access with the given transaction attributes.
  */
-int cpu_asidx_from_attrs(CPUState *cpu, MemTxAttrs attrs);
+int cpu_asidx_from_attrs(CPUState* cpu, MemTxAttrs attrs);
 
 /**
  * cpu_virtio_is_big_endian:
@@ -745,7 +752,7 @@ int cpu_asidx_from_attrs(CPUState *cpu, MemTxAttrs attrs);
  * Returns %true if a CPU which supports runtime configurable endianness
  * is currently big-endian.
  */
-bool cpu_virtio_is_big_endian(CPUState *cpu);
+bool cpu_virtio_is_big_endian(CPUState* cpu);
 
 #endif /* CONFIG_USER_ONLY */
 
@@ -753,19 +760,19 @@ bool cpu_virtio_is_big_endian(CPUState *cpu);
  * cpu_list_add:
  * @cpu: The CPU to be added to the list of CPUs.
  */
-void cpu_list_add(CPUState *cpu);
+void cpu_list_add(CPUState* cpu);
 
 /**
  * cpu_list_remove:
  * @cpu: The CPU to be removed from the list of CPUs.
  */
-void cpu_list_remove(CPUState *cpu);
+void cpu_list_remove(CPUState* cpu);
 
 /**
  * cpu_reset:
  * @cpu: The CPU whose state is to be reset.
  */
-void cpu_reset(CPUState *cpu);
+void cpu_reset(CPUState* cpu);
 
 /**
  * cpu_class_by_name:
@@ -777,7 +784,7 @@ void cpu_reset(CPUState *cpu);
  * Returns: A concrete #CPUClass or %NULL if no matching class is found
  *          or if the matching class is abstract.
  */
-ObjectClass *cpu_class_by_name(const char *typename, const char *cpu_model);
+ObjectClass* cpu_class_by_name(const char* typename, const char* cpu_model);
 
 /**
  * cpu_create:
@@ -787,7 +794,7 @@ ObjectClass *cpu_class_by_name(const char *typename, const char *cpu_model);
  *
  * Returns: A #CPUState or %NULL if an error occurred.
  */
-CPUState *cpu_create(const char *typename);
+CPUState* cpu_create(const char* typename);
 
 /**
  * parse_cpu_option:
@@ -798,7 +805,7 @@ CPUState *cpu_create(const char *typename);
  * Returns: type of CPU to create or prints error and terminates process
  *          if an error occurred.
  */
-const char *parse_cpu_option(const char *cpu_option);
+const char* parse_cpu_option(const char* cpu_option);
 
 /**
  * cpu_has_work:
@@ -808,9 +815,8 @@ const char *parse_cpu_option(const char *cpu_option);
  *
  * Returns: %true if the CPU has work, %false otherwise.
  */
-static inline bool cpu_has_work(CPUState *cpu)
-{
-    CPUClass *cc = CPU_GET_CLASS(cpu);
+static inline bool cpu_has_work(CPUState* cpu) {
+    CPUClass* cc = CPU_GET_CLASS(cpu);
 
     g_assert(cc->has_work);
     return cc->has_work(cpu);
@@ -824,7 +830,7 @@ static inline bool cpu_has_work(CPUState *cpu)
  *
  * Returns: %true if called from @cpu's thread, %false otherwise.
  */
-bool qemu_cpu_is_self(CPUState *cpu);
+bool qemu_cpu_is_self(CPUState* cpu);
 
 /**
  * qemu_cpu_kick:
@@ -832,7 +838,7 @@ bool qemu_cpu_is_self(CPUState *cpu);
  *
  * Kicks @cpu's thread.
  */
-void qemu_cpu_kick(CPUState *cpu);
+void qemu_cpu_kick(CPUState* cpu);
 
 /**
  * cpu_is_stopped:
@@ -843,7 +849,7 @@ void qemu_cpu_kick(CPUState *cpu);
  * Returns: %true if run state is not running or if artificially stopped;
  * %false otherwise.
  */
-bool cpu_is_stopped(CPUState *cpu);
+bool cpu_is_stopped(CPUState* cpu);
 
 /**
  * do_run_on_cpu:
@@ -854,8 +860,8 @@ bool cpu_is_stopped(CPUState *cpu);
  *
  * Used internally in the implementation of run_on_cpu.
  */
-void do_run_on_cpu(CPUState *cpu, run_on_cpu_func func, run_on_cpu_data data,
-                   QemuMutex *mutex);
+void do_run_on_cpu(CPUState* cpu, run_on_cpu_func func, run_on_cpu_data data,
+                   QemuMutex* mutex);
 
 /**
  * run_on_cpu:
@@ -865,7 +871,7 @@ void do_run_on_cpu(CPUState *cpu, run_on_cpu_func func, run_on_cpu_data data,
  *
  * Schedules the function @func for execution on the vCPU @cpu.
  */
-void run_on_cpu(CPUState *cpu, run_on_cpu_func func, run_on_cpu_data data);
+void run_on_cpu(CPUState* cpu, run_on_cpu_func func, run_on_cpu_data data);
 
 /**
  * async_run_on_cpu:
@@ -875,7 +881,7 @@ void run_on_cpu(CPUState *cpu, run_on_cpu_func func, run_on_cpu_data data);
  *
  * Schedules the function @func for execution on the vCPU @cpu asynchronously.
  */
-void async_run_on_cpu(CPUState *cpu, run_on_cpu_func func, run_on_cpu_data data);
+void async_run_on_cpu(CPUState* cpu, run_on_cpu_func func, run_on_cpu_data data);
 
 /**
  * async_safe_run_on_cpu:
@@ -889,7 +895,7 @@ void async_run_on_cpu(CPUState *cpu, run_on_cpu_func func, run_on_cpu_data data)
  * Unlike run_on_cpu and async_run_on_cpu, the function is run outside the
  * BQL.
  */
-void async_safe_run_on_cpu(CPUState *cpu, run_on_cpu_func func, run_on_cpu_data data);
+void async_safe_run_on_cpu(CPUState* cpu, run_on_cpu_func func, run_on_cpu_data data);
 
 /**
  * cpu_in_exclusive_context()
@@ -898,8 +904,7 @@ void async_safe_run_on_cpu(CPUState *cpu, run_on_cpu_func func, run_on_cpu_data 
  * Returns true if @cpu is an exclusive context, for example running
  * something which has previously been queued via async_safe_run_on_cpu().
  */
-static inline bool cpu_in_exclusive_context(const CPUState *cpu)
-{
+static inline bool cpu_in_exclusive_context(const CPUState* cpu) {
     return cpu->exclusive_context_count;
 }
 
@@ -911,7 +916,7 @@ static inline bool cpu_in_exclusive_context(const CPUState *cpu)
  *
  * Returns: The CPU or %NULL if there is no matching CPU.
  */
-CPUState *qemu_get_cpu(int index);
+CPUState* qemu_get_cpu(int index);
 
 /**
  * cpu_exists:
@@ -931,7 +936,7 @@ bool cpu_exists(int64_t id);
  *
  * Returns: The CPU or %NULL if there is no matching CPU.
  */
-CPUState *cpu_by_arch_id(int64_t id);
+CPUState* cpu_by_arch_id(int64_t id);
 
 /**
  * cpu_interrupt:
@@ -941,7 +946,7 @@ CPUState *cpu_by_arch_id(int64_t id);
  * Invokes the interrupt handler.
  */
 
-void cpu_interrupt(CPUState *cpu, int mask);
+void cpu_interrupt(CPUState* cpu, int mask);
 
 /**
  * cpu_set_pc:
@@ -950,9 +955,8 @@ void cpu_interrupt(CPUState *cpu, int mask);
  *
  * Sets the program counter for a CPU.
  */
-static inline void cpu_set_pc(CPUState *cpu, vaddr addr)
-{
-    CPUClass *cc = CPU_GET_CLASS(cpu);
+static inline void cpu_set_pc(CPUState* cpu, vaddr addr) {
+    CPUClass* cc = CPU_GET_CLASS(cpu);
 
     cc->set_pc(cpu, addr);
 }
@@ -964,7 +968,7 @@ static inline void cpu_set_pc(CPUState *cpu, vaddr addr)
  *
  * Resets interrupts on the vCPU @cpu.
  */
-void cpu_reset_interrupt(CPUState *cpu, int mask);
+void cpu_reset_interrupt(CPUState* cpu, int mask);
 
 /**
  * cpu_exit:
@@ -972,7 +976,7 @@ void cpu_reset_interrupt(CPUState *cpu, int mask);
  *
  * Requests the CPU @cpu to exit execution.
  */
-void cpu_exit(CPUState *cpu) REVNG_ABORT;
+void cpu_exit(CPUState* cpu) REVNG_ABORT;
 
 /**
  * cpu_resume:
@@ -980,7 +984,7 @@ void cpu_exit(CPUState *cpu) REVNG_ABORT;
  *
  * Resumes CPU, i.e. puts CPU into runnable state.
  */
-void cpu_resume(CPUState *cpu);
+void cpu_resume(CPUState* cpu);
 
 /**
  * cpu_remove_sync:
@@ -988,13 +992,13 @@ void cpu_resume(CPUState *cpu);
  *
  * Requests the CPU to be removed and waits till it is removed.
  */
-void cpu_remove_sync(CPUState *cpu);
+void cpu_remove_sync(CPUState* cpu);
 
 /**
  * process_queued_cpu_work() - process all items on CPU work queue
  * @cpu: The CPU which work queue to process.
  */
-void process_queued_cpu_work(CPUState *cpu) REVNG_NOOP;
+void process_queued_cpu_work(CPUState* cpu) REVNG_NOOP;
 
 /**
  * cpu_exec_start:
@@ -1003,7 +1007,7 @@ void process_queued_cpu_work(CPUState *cpu) REVNG_NOOP;
  * Record that a CPU has started execution and can be interrupted with
  * cpu_exit.
  */
-void cpu_exec_start(CPUState *cpu) REVNG_NOOP;
+void cpu_exec_start(CPUState* cpu) REVNG_NOOP;
 
 /**
  * cpu_exec_end:
@@ -1012,7 +1016,7 @@ void cpu_exec_start(CPUState *cpu) REVNG_NOOP;
  * Record that a CPU has stopped execution and exclusive sections
  * can be executed without interrupting it.
  */
-void cpu_exec_end(CPUState *cpu) REVNG_NOOP;
+void cpu_exec_end(CPUState* cpu) REVNG_NOOP;
 
 /**
  * start_exclusive:
@@ -1039,11 +1043,11 @@ void end_exclusive(void);
  *
  * Initializes a vCPU.
  */
-void qemu_init_vcpu(CPUState *cpu);
+void qemu_init_vcpu(CPUState* cpu);
 
-#define SSTEP_ENABLE  0x1  /* Enable simulated HW single stepping */
-#define SSTEP_NOIRQ   0x2  /* Do not use IRQ while single stepping */
-#define SSTEP_NOTIMER 0x4  /* Do not Timers while single stepping */
+#define SSTEP_ENABLE 0x1  /* Enable simulated HW single stepping */
+#define SSTEP_NOIRQ 0x2   /* Do not use IRQ while single stepping */
+#define SSTEP_NOTIMER 0x4 /* Do not Timers while single stepping */
 
 /**
  * cpu_single_step:
@@ -1052,32 +1056,31 @@ void qemu_init_vcpu(CPUState *cpu);
  *
  * Enables or disables single-stepping for @cpu.
  */
-void cpu_single_step(CPUState *cpu, int enabled);
+void cpu_single_step(CPUState* cpu, int enabled);
 
 /* Breakpoint/watchpoint flags */
-#define BP_MEM_READ           0x01
-#define BP_MEM_WRITE          0x02
-#define BP_MEM_ACCESS         (BP_MEM_READ | BP_MEM_WRITE)
+#define BP_MEM_READ 0x01
+#define BP_MEM_WRITE 0x02
+#define BP_MEM_ACCESS (BP_MEM_READ | BP_MEM_WRITE)
 #define BP_STOP_BEFORE_ACCESS 0x04
 /* 0x08 currently unused */
-#define BP_GDB                0x10
-#define BP_CPU                0x20
-#define BP_ANY                (BP_GDB | BP_CPU)
-#define BP_HIT_SHIFT          6
-#define BP_WATCHPOINT_HIT_READ  (BP_MEM_READ << BP_HIT_SHIFT)
+#define BP_GDB 0x10
+#define BP_CPU 0x20
+#define BP_ANY (BP_GDB | BP_CPU)
+#define BP_HIT_SHIFT 6
+#define BP_WATCHPOINT_HIT_READ (BP_MEM_READ << BP_HIT_SHIFT)
 #define BP_WATCHPOINT_HIT_WRITE (BP_MEM_WRITE << BP_HIT_SHIFT)
-#define BP_WATCHPOINT_HIT       (BP_MEM_ACCESS << BP_HIT_SHIFT)
+#define BP_WATCHPOINT_HIT (BP_MEM_ACCESS << BP_HIT_SHIFT)
 
-int cpu_breakpoint_insert(CPUState *cpu, vaddr pc, int flags,
-                          CPUBreakpoint **breakpoint);
-int cpu_breakpoint_remove(CPUState *cpu, vaddr pc, int flags);
-void cpu_breakpoint_remove_by_ref(CPUState *cpu, CPUBreakpoint *breakpoint);
-void cpu_breakpoint_remove_all(CPUState *cpu, int mask);
+int cpu_breakpoint_insert(CPUState* cpu, vaddr pc, int flags,
+                          CPUBreakpoint** breakpoint);
+int cpu_breakpoint_remove(CPUState* cpu, vaddr pc, int flags);
+void cpu_breakpoint_remove_by_ref(CPUState* cpu, CPUBreakpoint* breakpoint);
+void cpu_breakpoint_remove_all(CPUState* cpu, int mask);
 
 /* Return true if PC matches an installed breakpoint.  */
-static inline bool cpu_breakpoint_test(CPUState *cpu, vaddr pc, int mask)
-{
-    CPUBreakpoint *bp;
+static inline bool cpu_breakpoint_test(CPUState* cpu, vaddr pc, int mask) {
+    CPUBreakpoint* bp;
 
     if (unlikely(!QTAILQ_EMPTY(&cpu->breakpoints))) {
         QTAILQ_FOREACH(bp, &cpu->breakpoints, entry) {
@@ -1090,33 +1093,29 @@ static inline bool cpu_breakpoint_test(CPUState *cpu, vaddr pc, int mask)
 }
 
 #if defined(CONFIG_USER_ONLY)
-static inline int cpu_watchpoint_insert(CPUState *cpu, vaddr addr, vaddr len,
-                                        int flags, CPUWatchpoint **watchpoint)
-{
+static inline int cpu_watchpoint_insert(CPUState* cpu, vaddr addr, vaddr len,
+                                        int flags, CPUWatchpoint** watchpoint) {
     return -ENOSYS;
 }
 
-static inline int cpu_watchpoint_remove(CPUState *cpu, vaddr addr,
-                                        vaddr len, int flags)
-{
+static inline int cpu_watchpoint_remove(CPUState* cpu, vaddr addr,
+                                        vaddr len, int flags) {
     return -ENOSYS;
 }
 
-static inline void cpu_watchpoint_remove_by_ref(CPUState *cpu,
-                                                CPUWatchpoint *wp)
-{
+static inline void cpu_watchpoint_remove_by_ref(CPUState* cpu,
+                                                CPUWatchpoint* wp) {
 }
 
-static inline void cpu_watchpoint_remove_all(CPUState *cpu, int mask)
-{
+static inline void cpu_watchpoint_remove_all(CPUState* cpu, int mask) {
 }
 #else
-int cpu_watchpoint_insert(CPUState *cpu, vaddr addr, vaddr len,
-                          int flags, CPUWatchpoint **watchpoint);
-int cpu_watchpoint_remove(CPUState *cpu, vaddr addr,
+int cpu_watchpoint_insert(CPUState* cpu, vaddr addr, vaddr len,
+                          int flags, CPUWatchpoint** watchpoint);
+int cpu_watchpoint_remove(CPUState* cpu, vaddr addr,
                           vaddr len, int flags);
-void cpu_watchpoint_remove_by_ref(CPUState *cpu, CPUWatchpoint *watchpoint);
-void cpu_watchpoint_remove_all(CPUState *cpu, int mask);
+void cpu_watchpoint_remove_by_ref(CPUState* cpu, CPUWatchpoint* watchpoint);
+void cpu_watchpoint_remove_all(CPUState* cpu, int mask);
 #endif
 
 /**
@@ -1127,8 +1126,7 @@ void cpu_watchpoint_remove_all(CPUState *cpu, int mask);
  * instruction for memory. This can be useful to know if you want to
  * force a slow path for a series of memory accesses.
  */
-static inline bool cpu_plugin_mem_cbs_enabled(const CPUState *cpu)
-{
+static inline bool cpu_plugin_mem_cbs_enabled(const CPUState* cpu) {
 #ifdef CONFIG_PLUGIN
     return !!cpu->plugin_mem_cbs;
 #else
@@ -1144,17 +1142,17 @@ static inline bool cpu_plugin_mem_cbs_enabled(const CPUState *cpu)
  * Return the requested address space of this CPU. @asidx
  * specifies which address space to read.
  */
-AddressSpace *cpu_get_address_space(CPUState *cpu, int asidx);
+AddressSpace* cpu_get_address_space(CPUState* cpu, int asidx);
 
-G_NORETURN void cpu_abort(CPUState *cpu, const char *fmt, ...)
+G_NORETURN void cpu_abort(CPUState* cpu, const char* fmt, ...)
     G_GNUC_PRINTF(2, 3) REVNG_ABORT;
 
 /* $(top_srcdir)/cpu.c */
-void cpu_class_init_props(DeviceClass *dc);
-void cpu_exec_initfn(CPUState *cpu);
-bool cpu_exec_realizefn(CPUState *cpu, Error **errp);
-void cpu_exec_unrealizefn(CPUState *cpu);
-void cpu_exec_reset_hold(CPUState *cpu);
+void cpu_class_init_props(DeviceClass* dc);
+void cpu_exec_initfn(CPUState* cpu);
+bool cpu_exec_realizefn(CPUState* cpu, Error** errp);
+void cpu_exec_unrealizefn(CPUState* cpu);
+void cpu_exec_reset_hold(CPUState* cpu);
 
 /**
  * target_words_bigendian:
@@ -1167,7 +1165,7 @@ void cpu_exec_reset_hold(CPUState *cpu);
  */
 bool target_words_bigendian(void);
 
-const char *target_name(void);
+const char* target_name(void);
 
 void page_size_init(void);
 
@@ -1177,12 +1175,12 @@ void page_size_init(void);
 
 extern const VMStateDescription vmstate_cpu_common;
 
-#define VMSTATE_CPU() {                                                     \
-    .name = "parent_obj",                                                   \
-    .size = sizeof(CPUState),                                               \
-    .vmsd = &vmstate_cpu_common,                                            \
-    .flags = VMS_STRUCT,                                                    \
-    .offset = 0,                                                            \
+#define VMSTATE_CPU() {          \
+    .name = "parent_obj",        \
+    .size = sizeof(CPUState),    \
+    .vmsd = &vmstate_cpu_common, \
+    .flags = VMS_STRUCT,         \
+    .offset = 0,                 \
 }
 #endif /* !CONFIG_USER_ONLY */
 
