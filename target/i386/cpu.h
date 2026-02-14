@@ -2048,7 +2048,6 @@ _Static_assert(offsetof(ArchCPU, env) + offsetof(CPUX86State, xmm_regs[5]) == 0x
 _Static_assert(offsetof(ArchCPU, env) + offsetof(CPUX86State, xmm_regs[6]) == 0x2c90, "");
 _Static_assert(offsetof(ArchCPU, env) + offsetof(CPUX86State, xmm_regs[7]) == 0x2cd0, "");
 #else
-_Static_assert(false, "Hii!!")
 _Static_assert(offsetof(ArchCPU, env) + offsetof(CPUX86State, fpregs[0]) == 0x2960, "");
 #endif
 
