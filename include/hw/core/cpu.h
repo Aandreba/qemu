@@ -543,7 +543,7 @@ struct CPUState {
 #ifdef CONFIG_PLUGIN
     GArray* plugin_mem_cbs;
 #else
-    // void* __plugin_filler;
+    void* __plugin_filler;
 #endif
 
     /* TODO Move common fields from CPUArchState here. */
