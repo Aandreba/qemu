@@ -2048,8 +2048,9 @@ _Static_assert(offsetof(ArchCPU, env) + offsetof(CPUX86State, xmm_regs[5]) == 0x
 _Static_assert(offsetof(ArchCPU, env) + offsetof(CPUX86State, xmm_regs[6]) == 0x2c90, "");
 _Static_assert(offsetof(ArchCPU, env) + offsetof(CPUX86State, xmm_regs[7]) == 0x2cd0, "");
 #else
+_Static_assert(offsetof(ArchCPU, env) == 10176 - sizeof(void*), "");
 _Static_assert(offsetof(ArchCPU, env) == 10176, "");
-_Static_assert(offsetof(CPUX86State, fpregs[0]) == 416, "");
+_Static_assert(offsetof(ArchCPU, env) == 10176 + sizeof(void*), "");
 _Static_assert(offsetof(ArchCPU, env) + offsetof(CPUX86State, fpregs[0]) == 0x2960, "");
 #endif
 
